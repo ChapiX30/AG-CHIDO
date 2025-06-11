@@ -41,21 +41,26 @@ export const CategoryDetailScreen = () => {
     acustica: "AGAC"
   };
 
+  const generarConsecutivoFirebase = async (magnitud, usuario) => {
+    const año = new Date().getFullYear().toString().slice(-2);
+    const numero = Math.floor(Math.random() * 10000).toString().padStart(4, "0");
+    const prefijo = prefijos[magnitud?.toLowerCase()] || "AGX";
+    const consecutivo = `${prefijo}-${numero}-${año}`;
+
+    await addDoc(collection(db, "consecutivos"), {
+      fecha: Timestamp.now(),
+      magnitud,
+      usuario,
+      consecutivo
+    });
+
+    return consecutivo;
+  };
+
   const generarConsecutivo = async () => {
     setGenerando(true);
     try {
-      const año = new Date().getFullYear().toString().slice(-2);
-      const numero = Math.floor(Math.random() * 10000).toString().padStart(4, "0");
-      const prefijo = prefijos[magnitud?.toLowerCase()] || "AGX";
-      const consecutivo = `${prefijo}-${numero}-${año}`;
-
-      await addDoc(collection(db, "consecutivos"), {
-        fecha: Timestamp.now(),
-        magnitud,
-        usuario: "Abraham Ginez",
-        consecutivo
-      });
-
+      const consecutivo = await generarConsecutivoFirebase(magnitud, "Abraham Ginez");
       navigate("/worksheet", { state: { consecutivo, magnitud } });
     } catch (error) {
       console.error("Error al generar consecutivo:", error);

@@ -1,28 +1,33 @@
-export async function generarConsecutivoSheet(magnitud: string, usuario: string) {
-    const url = "https://script.google.com/macros/s/AKfycbyjDA48PH2cJzTBR4QS-K_hYIjGrwu0czQLBvFBnaEvSf0u4wRT-hb9VGNW61XSCKVx/exec"; // usa aquí tu URL actualizada
+import {
+    getFirestore,
+    collection,
+    addDoc,
+    Timestamp,
+} from "firebase/firestore";
+import { db } from "./firebase"; // Asegúrate de tener este archivo
 
-    try {
-        const response = await fetch(url, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                magnitud,
-                usuario,
-                accion: "generar"
-            })
-        });
+export const generarConsecutivoFirebase = async (magnitud: string, usuario: string) => {
+    const año = new Date().getFullYear().toString().slice(-2);
+    const numero = Math.floor(Math.random() * 10000).toString().padStart(4, "0");
 
-        if (!response.ok) {
-            throw new Error(`HTTP error ${response.status}`);
-        }
+    const prefijos: Record<string, string> = {
+        dimensional: "AGD",
+        flujo: "AGFL",
+        presion: "AGP",
+        fuerza: "AGF",
+        electrica: "AGEL",
+        acustica: "AGAC"
+    };
 
-        const data = await response.json();
-        return data;
-    } catch (error) {
-        console.error("Error al generar consecutivo:", error);
-        return { error: error.message };
-    }
-}
+    const prefijo = prefijos[magnitud?.toLowerCase()] || "AGX";
+    const consecutivo = `${prefijo}-${numero}-${año}`;
 
+    await addDoc(collection(db, "consecutivos"), {
+        fecha: Timestamp.now(),
+        magnitud,
+        usuario,
+        consecutivo,
+    });
+
+    return consecutivo;
+};
