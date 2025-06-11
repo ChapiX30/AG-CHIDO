@@ -46,8 +46,8 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, onNavigateToR
           <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl mb-6 shadow-2xl">
             <Zap className="text-white" size={32} />
           </div>
-          <h1 className="text-3xl font-bold text-white mb-2">QualityControl</h1>
-          <p className="text-blue-200">Sistema de Consecutivos</p>
+          <h1 className="text-3xl font-bold text-white mb-2">Equipos AG</h1>
+          <p className="text-blue-200">Sistema de Metrologia</p>
         </div>
 
         <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 shadow-2xl border border-white/20">
