@@ -14,7 +14,7 @@ export async function generarConsecutivoFirebase(magnitud: string, usuario: stri
     };
 
     const prefijo = prefijos[magnitud?.toLowerCase()] || "AGX";
-    const consecutivo = `${prefijo}-${numero}-${año}`;
+    const consecutivo = `${prefijo}-${numero}-${anio}`;
 
     return consecutivo;
 }
