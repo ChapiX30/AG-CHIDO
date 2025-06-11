@@ -8,7 +8,7 @@ import { DetailsScreen } from './components/DetailsScreen';
 import { WorkSheetScreen } from './components/WorkSheetScreen';
 import { categories } from './data/categories';
 import { generateConsecutive } from './utils/consecutiveGenerator';
-import { generarConsecutivoSheet } from './utils/api';
+import { generarConsecutivoFirebase } from './utils/api';
 import { Category, GeneratedConsecutive, User } from './types';
 
 type Screen = 'login' | 'register' | 'main' | 'categories' | 'categoryDetail' | 'details' | 'worksheet';
@@ -51,8 +51,8 @@ function App() {
 
   const handleGenerateConsecutive = async (category: Category) => {
     if (!currentUser) return;
-    const resultado = await generarConsecutivoSheet(category.id, currentUser.fullName);
-    setGeneratedCert(resultado.consecutivo);
+    const consecutivo = await generarConsecutivoFirebase(category.id, currentUser.fullName);
+    setGeneratedCert(consecutivo);
     setCurrentScreen('worksheet');
   };
 
