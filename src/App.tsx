@@ -5,11 +5,13 @@ import { MainScreen } from './components/MainScreen';
 import { CategoriesScreen } from './components/CategoriesScreen';
 import { CategoryDetailScreen } from './components/CategoryDetailScreen';
 import { DetailsScreen } from './components/DetailsScreen';
+import { WorkSheetScreen } from './components/WorkSheetScreen';
 import { categories } from './data/categories';
 import { generateConsecutive } from './utils/consecutiveGenerator';
+import { generarConsecutivoSheet } from './utils/api';
 import { Category, GeneratedConsecutive, User } from './types';
 
-type Screen = 'login' | 'register' | 'main' | 'categories' | 'categoryDetail' | 'details';
+type Screen = 'login' | 'register' | 'main' | 'categories' | 'categoryDetail' | 'details' | 'worksheet';
 
 function App() {
   const [currentScreen, setCurrentScreen] = useState<Screen>('login');
@@ -17,6 +19,7 @@ function App() {
   const [generatedConsecutives, setGeneratedConsecutives] = useState<GeneratedConsecutive[]>([]);
   const [currentConsecutive, setCurrentConsecutive] = useState<GeneratedConsecutive | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
+  const [generatedCert, setGeneratedCert] = useState<string | null>(null);
 
   const handleLogin = (username: string, password: string) => {
     const user: User = {
@@ -46,20 +49,18 @@ function App() {
     setCurrentScreen('categoryDetail');
   };
 
-  const handleGenerateConsecutive = (category: Category) => {
-    const detail = generateConsecutive(category, currentUser?.fullName || 'Usuario');
-    const newConsecutive: GeneratedConsecutive = { category, detail };
-    
-    setGeneratedConsecutives(prev => [...prev, newConsecutive]);
-    setCurrentConsecutive(newConsecutive);
-    setCurrentScreen('details');
+  const handleGenerateConsecutive = async (category: Category) => {
+    if (!currentUser) return;
+    const resultado = await generarConsecutivoSheet(category.id, currentUser.fullName);
+    setGeneratedCert(resultado.consecutivo);
+    setCurrentScreen('worksheet');
   };
 
   const handleUndo = () => {
     if (generatedConsecutives.length > 0) {
       const newConsecutives = generatedConsecutives.slice(0, -1);
       setGeneratedConsecutives(newConsecutives);
-      
+
       if (newConsecutives.length > 0) {
         setCurrentConsecutive(newConsecutives[newConsecutives.length - 1]);
       } else {
@@ -133,6 +134,13 @@ function App() {
         <DetailsScreen 
           detail={currentConsecutive.detail}
           onBack={handleBack}
+        />
+      )}
+
+      {currentScreen === 'worksheet' && generatedCert && (
+        <WorkSheetScreen 
+          consecutivo={generatedCert}
+          onBack={() => setCurrentScreen('categoryDetail')}
         />
       )}
     </div>

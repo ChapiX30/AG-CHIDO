@@ -22,10 +22,8 @@ export const CategoryDetailScreen: React.FC<CategoryDetailScreenProps> = ({
 
   const handleGenerate = async () => {
     setIsGenerating(true);
-    setTimeout(() => {
-      onGenerateConsecutive(category);
-      setIsGenerating(false);
-    }, 1000);
+    await onGenerateConsecutive(category);
+    setIsGenerating(false);
   };
 
   const recentConsecutives = categoryHistory.slice(-3).reverse();
