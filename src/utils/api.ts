@@ -1,7 +1,7 @@
 // src/utils/api.ts
 
 export async function generarConsecutivoFirebase(magnitud: string, usuario: string) {
-    const año = new Date().getFullYear().toString().slice(-2);
+    const anio = new Date().getFullYear().toString().slice(-2);
     const numero = Math.floor(Math.random() * 10000).toString().padStart(4, "0");
 
     const prefijos: Record<string, string> = {
