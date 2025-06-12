@@ -1,3 +1,4 @@
+// Cambio de prueba para forzar push
 import { getFirestore, collection, addDoc, Timestamp } from "firebase/firestore";
 
 const db = getFirestore();
