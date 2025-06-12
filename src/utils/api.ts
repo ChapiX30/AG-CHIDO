@@ -12,10 +12,10 @@ const prefijos: { [key: string]: string } = {
 };
 
 export async function generarConsecutivoFirebase(magnitud: string, usuario: string): Promise<string> {
-    const año = new Date().getFullYear().toString().slice(-2);
+    const anio = new Date().getFullYear().toString().slice(-2);
     const numero = Math.floor(Math.random() * 10000).toString().padStart(4, "0");
     const prefijo = prefijos[magnitud?.toLowerCase()] || "AGX";
-    const consecutivo = `${prefijo}-${numero}-${año}`;
+    const consecutivo = `${prefijo}-${numero}-${anio}`;
 
     await addDoc(collection(db, "consecutivos"), {
         fecha: Timestamp.now(),
