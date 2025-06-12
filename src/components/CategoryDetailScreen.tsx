@@ -5,10 +5,6 @@ import {
   getFirestore,
   collection,
   addDoc,
-  getDocs,
-  query,
-  orderBy,
-  limit,
   Timestamp,
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
@@ -30,7 +26,6 @@ export const CategoryDetailScreen = () => {
   const [generando, setGenerando] = useState(false);
   const [total, setTotal] = useState(0);
   const [hoy, setHoy] = useState(0);
-  const [consecutivos, setConsecutivos] = useState([]);
 
   const prefijos = {
     dimensional: "AGD",
@@ -41,7 +36,11 @@ export const CategoryDetailScreen = () => {
     acustica: "AGAC"
   };
 
-  const generarConsecutivoFirebase = async (magnitud, usuario) => {
+  if (!magnitud) {
+    return <div className="p-4 text-red-600">❌ Parámetro "magnitud" no definido.</div>;
+  }
+
+  const generarConsecutivoFirebase = async (magnitud: string, usuario: string) => {
     const anio = new Date().getFullYear().toString().slice(-2);
     const numero = Math.floor(Math.random() * 10000).toString().padStart(4, "0");
     const prefijo = prefijos[magnitud?.toLowerCase()] || "AGX";
@@ -107,7 +106,10 @@ export const CategoryDetailScreen = () => {
         )}
       </button>
 
-      <button className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white font-bold py-3 px-4 rounded-xl" disabled>
+      <button
+        className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white font-bold py-3 px-4 rounded-xl"
+        disabled
+      >
         ↩️ Deshacer Último
       </button>
     </div>
