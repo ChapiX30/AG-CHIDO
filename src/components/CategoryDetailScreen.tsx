@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, BrowserRouter, Routes, Route } from "react-router-dom";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import {
   getFirestore,
@@ -27,6 +27,13 @@ export const CategoryDetailScreen = () => {
   const [total, setTotal] = useState(0);
   const [hoy, setHoy] = useState(0);
 
+  useEffect(() => {
+    if (!magnitud) {
+      alert("❌ Parámetro 'magnitud' no definido.");
+      navigate("/categories");
+    }
+  }, [magnitud, navigate]);
+
   const prefijos = {
     dimensional: "AGD",
     flujo: "AGFL",
@@ -36,11 +43,7 @@ export const CategoryDetailScreen = () => {
     acustica: "AGAC"
   };
 
-  if (!magnitud) {
-    return <div className="p-4 text-red-600">❌ Parámetro "magnitud" no definido.</div>;
-  }
-
-  const generarConsecutivoFirebase = async (magnitud: string, usuario: string) => {
+  const generarConsecutivoFirebase = async (magnitud, usuario) => {
     const anio = new Date().getFullYear().toString().slice(-2);
     const numero = Math.floor(Math.random() * 10000).toString().padStart(4, "0");
     const prefijo = prefijos[magnitud?.toLowerCase()] || "AGX";
@@ -106,10 +109,7 @@ export const CategoryDetailScreen = () => {
         )}
       </button>
 
-      <button
-        className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white font-bold py-3 px-4 rounded-xl"
-        disabled
-      >
+      <button className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white font-bold py-3 px-4 rounded-xl" disabled>
         ↩️ Deshacer Último
       </button>
     </div>
