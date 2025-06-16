@@ -1,149 +1,43 @@
 import React, { useState } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { LoginScreen } from './components/LoginScreen';
-import { RegisterScreen } from './components/RegisterScreen';
 import { MainScreen } from './components/MainScreen';
 import { CategoriesScreen } from './components/CategoriesScreen';
 import { CategoryDetailScreen } from './components/CategoryDetailScreen';
-import { DetailsScreen } from './components/DetailsScreen';
 import { WorkSheetScreen } from './components/WorkSheetScreen';
+import { RegisterScreen } from './components/RegisterScreen';
 import { categories } from './data/categories';
 import { generateConsecutive } from './utils/consecutiveGenerator';
-import { generarConsecutivoFirebase } from './utils/api';
 import { Category, GeneratedConsecutive, User } from './types';
 
-type Screen = 'login' | 'register' | 'main' | 'categories' | 'categoryDetail' | 'details' | 'worksheet';
+type Screen = 'login' | 'register' | 'main' | 'categories' | 'categoryDetail' | 'worksheet';
 
 function App() {
   const [currentScreen, setCurrentScreen] = useState<Screen>('login');
   const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [generatedConsecutives, setGeneratedConsecutives] = useState<GeneratedConsecutive[]>([]);
-  const [currentConsecutive, setCurrentConsecutive] = useState<GeneratedConsecutive | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
-  const [generatedCert, setGeneratedCert] = useState<string | null>(null);
-
-  const handleLogin = (username: string, password: string) => {
-    const user: User = {
-      id: '1',
-      username,
-      fullName: username,
-      email: username
-    };
-    setCurrentUser(user);
-    setCurrentScreen('main');
-  };
-
-  const handleLogout = () => {
-    setCurrentUser(null);
-    setCurrentScreen('login');
-    setGeneratedConsecutives([]);
-    setCurrentConsecutive(null);
-    setSelectedCategory(null);
-  };
-
-  const handleNavigateToCategories = () => {
-    setCurrentScreen('categories');
-  };
-
-  const handleSelectCategory = (category: Category) => {
-    setSelectedCategory(category);
-    setCurrentScreen('categoryDetail');
-  };
-
-  const handleGenerateConsecutive = async (category: Category) => {
-    if (!currentUser) return;
-    const consecutivo = await generarConsecutivoFirebase(category.id, currentUser.fullName);
-    setGeneratedCert(consecutivo);
-    setCurrentScreen('worksheet');
-  };
-
-  const handleUndo = () => {
-    if (generatedConsecutives.length > 0) {
-      const newConsecutives = generatedConsecutives.slice(0, -1);
-      setGeneratedConsecutives(newConsecutives);
-
-      if (newConsecutives.length > 0) {
-        setCurrentConsecutive(newConsecutives[newConsecutives.length - 1]);
-      } else {
-        setCurrentConsecutive(null);
-      }
-    }
-  };
-
-  const handleBack = () => {
-    if (currentScreen === 'details') {
-      setCurrentScreen('categoryDetail');
-    } else if (currentScreen === 'categoryDetail') {
-      setCurrentScreen('categories');
-    } else if (currentScreen === 'categories') {
-      setCurrentScreen('main');
-    }
-  };
-
-  const handleBackToMain = () => {
-    setCurrentScreen('main');
-  };
-
-  const getCategoryHistory = (categoryId: string) => {
-    return generatedConsecutives.filter(gc => gc.category.id === categoryId);
-  };
+  const [generatedConsecutive, setGeneratedConsecutive] = useState<GeneratedConsecutive | null>(null);
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      {currentScreen === 'login' && (
-        <LoginScreen
-          onLogin={handleLogin}
-          onNavigateToRegister={() => setCurrentScreen('register')}
-        />
-      )}
-
-      {currentScreen === 'register' && (
-        <RegisterScreen
-          onRegisterSuccess={() => setCurrentScreen('login')}
-          onBack={() => setCurrentScreen('login')}
-        />
-      )}
-
-      {currentScreen === 'main' && currentUser && (
-        <MainScreen 
-          user={currentUser}
-          onNavigateToCategories={handleNavigateToCategories}
-          onLogout={handleLogout}
-          totalConsecutives={generatedConsecutives.length}
-        />
-      )}
-      
-      {currentScreen === 'categories' && (
-        <CategoriesScreen 
+    <Router>
+      <Routes>
+        <Route path="/" element={<LoginScreen onLogin={(user) => {
+          setCurrentUser(user);
+          setCurrentScreen('main');
+        }} />} />
+        <Route path="/register" element={<RegisterScreen />} />
+        <Route path="/main" element={<MainScreen onGoToCategories={() => setCurrentScreen('categories')} />} />
+        <Route path="/categories" element={<CategoriesScreen
           categories={categories}
-          onSelectCategory={handleSelectCategory}
-          onBack={handleBackToMain}
-        />
-      )}
-
-      {currentScreen === 'categoryDetail' && selectedCategory && (
-        <CategoryDetailScreen
-          category={selectedCategory}
-          onBack={handleBack}
-          onGenerateConsecutive={handleGenerateConsecutive}
-          onUndo={handleUndo}
-          categoryHistory={getCategoryHistory(selectedCategory.id)}
-        />
-      )}
-      
-      {currentScreen === 'details' && currentConsecutive && (
-        <DetailsScreen 
-          detail={currentConsecutive.detail}
-          onBack={handleBack}
-        />
-      )}
-
-      {currentScreen === 'worksheet' && generatedCert && (
-        <WorkSheetScreen 
-          consecutivo={generatedCert}
-          onBack={() => setCurrentScreen('categoryDetail')}
-        />
-      )}
-    </div>
+          onSelectCategory={(category) => {
+            setSelectedCategory(category);
+            setCurrentScreen('categoryDetail');
+          }}
+        />} />
+        <Route path="/category/:magnitud" element={<CategoryDetailScreen />} />
+        <Route path="/worksheet" element={<WorkSheetScreen />} />
+      </Routes>
+    </Router>
   );
 }
 

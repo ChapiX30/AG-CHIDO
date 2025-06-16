@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate, BrowserRouter, Routes, Route } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import {
   getFirestore,
