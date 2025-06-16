@@ -20,23 +20,36 @@ function App() {
 
   return (
     <Routes>
-      <Route path="/" element={
-        <LoginScreen onLogin={(user) => {
-          setCurrentUser(user);
-          setCurrentScreen('main');
-        }} />
-      } />
+      <Route
+        path="/"
+        element={
+          <LoginScreen
+            onLogin={(user) => {
+              setCurrentUser(user);
+              setCurrentScreen('main');
+            }}
+          />
+        }
+      />
       <Route path="/register" element={<RegisterScreen />} />
-      <Route path="/main" element={<MainScreen onGoToCategories={() => setCurrentScreen('categories')} />} />
-      <Route path="/categories" element={
-        <CategoriesScreen
-          categories={categories}
-          onSelectCategory={(category) => {
-            setSelectedCategory(category);
-            setCurrentScreen('categoryDetail');
-          }}
-        />
-      } />
+      <Route
+        path="/main"
+        element={
+          <MainScreen onGoToCategories={() => setCurrentScreen('categories')} />
+        }
+      />
+      <Route
+        path="/categories"
+        element={
+          <CategoriesScreen
+            categories={categories}
+            onSelectCategory={(category) => {
+              setSelectedCategory(category);
+              setCurrentScreen('categoryDetail');
+            }}
+          />
+        }
+      />
       <Route path="/category/:magnitud" element={<CategoryDetailScreen />} />
       <Route path="/worksheet" element={<WorkSheetScreen />} />
     </Routes>
