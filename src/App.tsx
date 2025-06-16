@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import { LoginScreen } from './components/LoginScreen';
 import { MainScreen } from './components/MainScreen';
 import { CategoriesScreen } from './components/CategoriesScreen';
@@ -19,25 +19,27 @@ function App() {
   const [generatedConsecutive, setGeneratedConsecutive] = useState<GeneratedConsecutive | null>(null);
 
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<LoginScreen onLogin={(user) => {
+    <Routes>
+      <Route path="/" element={
+        <LoginScreen onLogin={(user) => {
           setCurrentUser(user);
           setCurrentScreen('main');
-        }} />} />
-        <Route path="/register" element={<RegisterScreen />} />
-        <Route path="/main" element={<MainScreen onGoToCategories={() => setCurrentScreen('categories')} />} />
-        <Route path="/categories" element={<CategoriesScreen
+        }} />
+      } />
+      <Route path="/register" element={<RegisterScreen />} />
+      <Route path="/main" element={<MainScreen onGoToCategories={() => setCurrentScreen('categories')} />} />
+      <Route path="/categories" element={
+        <CategoriesScreen
           categories={categories}
           onSelectCategory={(category) => {
             setSelectedCategory(category);
             setCurrentScreen('categoryDetail');
           }}
-        />} />
-        <Route path="/category/:magnitud" element={<CategoryDetailScreen />} />
-        <Route path="/worksheet" element={<WorkSheetScreen />} />
-      </Routes>
-    </Router>
+        />
+      } />
+      <Route path="/category/:magnitud" element={<CategoryDetailScreen />} />
+      <Route path="/worksheet" element={<WorkSheetScreen />} />
+    </Routes>
   );
 }
 
